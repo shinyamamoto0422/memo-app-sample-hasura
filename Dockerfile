@@ -1,4 +1,4 @@
-FROM hasura/graphql-engine:v2.3.1.cli-migrations-v3
+FROM hasura/graphql-engine:v2.3.1
 
 # Dockerfileに渡す変数
 ARG DB_USER
