@@ -12,44 +12,44 @@ steps:
       - "DB_PORT=$_DB_PORT"
       - "--build-arg"
       - "DB_DATABASE=$_DB_DATABASE"
-      - '--no-cache'
-      - '-t'
-      - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - "--no-cache"
+      - "-t"
+      - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
       - .
-      - '-f'
+      - "-f"
       - Dockerfile
     id: Build
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
     id: Push
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
       - run
       - services
       - update
       - $_SERVICE_NAME
-      - '--platform=managed'
-      - '--image=$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - "--platform=managed"
+      - "--image=$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
       - >-
         --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID,$_LABELS
-      - '--region=$_DEPLOY_REGION'
-      - '--quiet'
+      - "--region=$_DEPLOY_REGION"
+      - "--quiet"
     id: Deploy
     entrypoint: gcloud
-images:
-  - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
-options:
-  substitutionOption: ALLOW_LOOSE
-substitutions:
-  _SERVICE_NAME: memo-app-sample-hasura
-  _DEPLOY_REGION: asia-northeast2
-  _GCR_HOSTNAME: asia.gcr.io
-  _LABELS: gcb-trigger-id=a7732432-6457-49af-83e1-89b9fcf8aaeb
-  _TRIGGER_ID: a7732432-6457-49af-83e1-89b9fcf8aaeb
-  _PLATFORM: managed
-tags:
-  - gcp-cloud-build-deploy-cloud-run
-  - gcp-cloud-build-deploy-cloud-run-managed
-  - memo-app-sample-hasura
+    images:
+      - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
+    options:
+      substitutionOption: ALLOW_LOOSE
+    substitutions:
+      _PLATFORM: managed
+      _SERVICE_NAME: memo-app-sample-hasura
+      _LABELS: gcb-trigger-id=acdb8544-b93d-487e-8eb3-dafffc0d6954
+      _TRIGGER_ID: acdb8544-b93d-487e-8eb3-dafffc0d6954
+      _DEPLOY_REGION: asia-northeast1
+      _GCR_HOSTNAME: asia.gcr.io
+    tags:
+      - gcp-cloud-build-deploy-cloud-run
+      - gcp-cloud-build-deploy-cloud-run-managed
+      - memo-app-sample-hasura
